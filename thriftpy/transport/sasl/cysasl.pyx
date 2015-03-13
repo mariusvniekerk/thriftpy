@@ -164,7 +164,7 @@ cdef class TCySaslTransport(CyTransportBase):
         if length > 0:
             payload = self.trans.read(length)
         else:
-            payload = ""
+            payload = b""
         return status, payload
 
     cdef _send_message(self, status, bytes body):
