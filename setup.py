@@ -58,6 +58,8 @@ if not PYPY:
                                  ["thriftpy/transport/memory/cymemory.c"]))
     ext_modules.append(Extension("thriftpy.transport.framed.cyframed",
                                  ["thriftpy/transport/framed/cyframed.c"]))
+    ext_modules.append(Extension("thriftpy.transport.sasl.cysasl",
+                                 ["thriftpy/transport/sasl/cysasl.c"]))
     ext_modules.append(Extension("thriftpy.protocol.cybin",
                                  ["thriftpy/protocol/cybin/cybin.c"]))
 
