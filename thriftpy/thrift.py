@@ -11,7 +11,7 @@ from __future__ import absolute_import
 
 import functools
 
-from ._compat import init_func_generator, with_metaclass
+from ._compat import init_func_generator, with_metaclass, calling_func_generator
 
 
 def args2kwargs(thrift_spec, *args):
@@ -119,10 +119,19 @@ class TClient(object):
         if oprot is not None:
             self._oprot = oprot
         self._seqid = 0
+        self._functions = {}
 
     def __getattr__(self, _api):
+        if _api in self._functions:
+            return self._functions[_api]
         if _api in self._service.thrift_services:
-            return functools.partial(self._req, _api)
+
+            fn = functools.partial(self._req, _api)
+            args = getattr(self._service, _api + '_args')
+            doc = self._service.thrift_services_doc.get(_api)
+            ff = calling_func_generator(fn, getattr(self._service, _api + '_args'), doc)
+            self._functions[_api] = ff
+            return ff
 
         raise AttributeError("{} instance has no attribute '{}'".format(
             self.__class__.__name__, _api))
